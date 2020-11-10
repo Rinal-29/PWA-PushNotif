@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Football App">
+    <meta name="theme-color" content="#3f51b5">
+    <title>Football App</title>
+    <link rel="icon" href="../images/logo_app.png">
+    <link rel="apple-touch-icon" href="../images/logo_app.png">
+    <link rel="stylesheet" href="../../css/materialize.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="manifest" href="../../manifest.json">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="z-depth-3 indigo lighten-1" role="navigation">
+        <div class="nav-wrapper container">
+            <a href="../../index.html" class="brand-logo" id="logo-container">Football PWA</a>
+            <a href="../../index.html" class="sidenav-trigger" data-target="nav-mobile">
+                <i class="material-icons">arrow_back</i>
+            </a>
+
+            <ul class="topnav right hide-on-med-and-down"></ul>
+            <ul class="sidenav" id="nav-mobile"></ul>
+        </div>
+    </nav>
+    <!-- end navbar -->
+
+    <!-- body -->
+    <div class="container" id="body-content">
+    </div>
+    <!-- end body -->
+
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large red" id="save">
+            <i class="large material-icons">save</i>
+        </a>
+    </div>
+
+    <script src="/js/materialize.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/idb.js"></script>
+    <script src="/js/db.js"></script>
+    <script>
+        if (!("serviceWorker" in navigator)) {
+            console.log("Service Worker tidak didukung oleh browser");
+        } else {
+            registerServiceWorker();
+        }
+
+        function registerServiceWorker() {
+            return navigator.serviceWorker.register("/service-worker.js")
+                .then(function (register) {
+                    console.log("service worker register berhasil");
+                    return register;
+                }).catch(function (err) {
+                    console.error("serwice worker register gagal", err);
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let urlParams = new URLSearchParams(window.location.search);
+            let isFromSaved = urlParams.get("saved");
+            let item = getTeamById();
+
+            const save = document.getElementById("save");
+
+            if (isFromSaved) {
+                save.innerHTML = `<i class="large material-icons">delete</i>`
+                save.addEventListener("click", () => {
+                    item.then(teams => {
+                        deleteTeam(teams);
+                        M.toast({
+                            html: 'Team has been delete'
+                        })
+                    })
+                })
+                item;
+            } else {
+                save.addEventListener("click", () => {
+                    item.then(teams => {
+                        saveForLater(teams);
+                        M.toast({
+                            html: 'Team has been saved'
+                        })
+                    })
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>
